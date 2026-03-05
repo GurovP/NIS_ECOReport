@@ -1,0 +1,54 @@
+spring:
+  profiles.active: ${SPRING_PROFILES_ACTIVE:local}
+  main:
+    allow-bean-definition-overriding: true
+    allow-circular-references: true
+  task:
+    scheduling:
+      pool:
+        size: 10
+
+---
+spring:
+  application:
+    name: nis-ecoreport
+  jmx:
+    default-domain: nis-ecoreport
+#  datasource:
+#    initialization-mode: always
+#    schema: classpath:/schema/schema.sql,classpath:/schema/schema-update-*.sql
+#    continue-on-error: false
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:/schema/schema.sql,classpath:/schema/schema-update-*.sql
+      continue-on-error: false
+  jpa:
+    properties:
+      hibernate:
+        id:
+          db_structure_naming_strategy: legacy
+
+logging:
+  level.org.springframework.security: ERROR
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+
+server:
+  port: 6006
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dc
+
+server:
+  port: 8080
+
+management:
+  context-path: '/NISECOREPORT'
