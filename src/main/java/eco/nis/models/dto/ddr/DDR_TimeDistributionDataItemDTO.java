@@ -1,18 +1,18 @@
-package eco.nis.models;
+package eco.nis.models.dto.ddr;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class DDR_ReportDataItemDTO {
+public class DDR_TimeDistributionDataItemDTO {
 
-    private int dataType;
+    private String timeDistributionUid;
+    private long timestamp;
+    private String name;
     private String content;
 }

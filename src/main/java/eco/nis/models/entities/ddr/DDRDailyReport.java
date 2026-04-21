@@ -27,6 +27,14 @@ public class DDRDailyReport {
 
     private String lastApproveUser;
 
+    private String wellNameLegal;
+    private String wellField;
+    private String wellCluster;
+    private String wellCustomer;
+    private String rigName;
+    private String projectName;
+    private int projectPhase;
+
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy="report")
     private List<DDRDailyReportData> reportDatum = new ArrayList<>();
 
@@ -50,6 +58,14 @@ public class DDRDailyReport {
         approved = other.isApproved();
         lastApproveDate = other.getLastApproveDate();
         lastApproveUser = other.getLastApproveUser();
+
+        wellNameLegal = other.getWellNameLegal();
+        wellField = other.getWellField();
+        wellCluster = other.getWellCluster();
+        wellCustomer = other.getWellCustomer();
+        rigName = other.getRigName();
+        projectName = other.getProjectName();
+        projectPhase = other.getProjectPhase();
 
         copyReportData(other);
     }
@@ -154,6 +170,62 @@ public class DDRDailyReport {
 
     public void setLastApproveUser(String lastApproveUser) {
         this.lastApproveUser = lastApproveUser;
+    }
+
+    public String getWellNameLegal() {
+        return wellNameLegal;
+    }
+
+    public void setWellNameLegal(String wellNameLegal) {
+        this.wellNameLegal = wellNameLegal;
+    }
+
+    public String getWellField() {
+        return wellField;
+    }
+
+    public void setWellField(String wellField) {
+        this.wellField = wellField;
+    }
+
+    public String getWellCluster() {
+        return wellCluster;
+    }
+
+    public void setWellCluster(String wellCluster) {
+        this.wellCluster = wellCluster;
+    }
+
+    public String getWellCustomer() {
+        return wellCustomer;
+    }
+
+    public void setWellCustomer(String wellCustomer) {
+        this.wellCustomer = wellCustomer;
+    }
+
+    public String getRigName() {
+        return rigName;
+    }
+
+    public void setRigName(String rigName) {
+        this.rigName = rigName;
+    }
+
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
+    public int getProjectPhase() {
+        return projectPhase;
+    }
+
+    public void setProjectPhase(int projectPhase) {
+        this.projectPhase = projectPhase;
     }
 
     public List<DDRDailyReportData> getReportDatum() {

@@ -19,6 +19,7 @@ public class ECOReportingSyncLog {
     private int addedCount;
     private int updatedCount;
     private int deletedCount;
+    private String status;
 
     public ECOReportingSyncLog() {
 
@@ -78,5 +79,13 @@ public class ECOReportingSyncLog {
 
     public void setDeletedCount(int deletedCount) {
         this.deletedCount = deletedCount;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

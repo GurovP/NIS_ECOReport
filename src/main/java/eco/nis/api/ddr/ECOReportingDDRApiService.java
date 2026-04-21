@@ -1,9 +1,10 @@
-package eco.nis.api;
+package eco.nis.api.ddr;
 
 import eco.nis.NIS_ECOReportApplication;
-import eco.nis.models.DDR_ReportDataDTO;
-import eco.nis.models.DDR_ReportDescriptionDTO;
-import eco.nis.models.ECOReportingServiceSettingsDTO;
+import eco.nis.api.ResponseWrapper;
+import eco.nis.models.dto.ddr.DDR_ReportDataDTO;
+import eco.nis.models.dto.ddr.DDR_ReportDescriptionDTO;
+import eco.nis.models.dto.ECOReportingServiceSettingsDTO;
 import eco.nis.models.entities.ECOReportingServiceSettings;
 import eco.nis.repositories.ECOReportingServiceSettingsRepository;
 import org.springframework.stereotype.Service;
@@ -22,36 +23,36 @@ public class ECOReportingDDRApiService {
 
     }
 
-    public DDR_ReportDescriptionDTO[] listReports() {
+    public ResponseWrapper<DDR_ReportDescriptionDTO[]> listReports() {
 
         try {
             var ecoReportingDDRApi = getECOReportingDDRApi();
             if (ecoReportingDDRApi == null) {
                 NIS_ECOReportApplication.logger.warn("ecoReportingDDRApi not defined");
-                return new DDR_ReportDescriptionDTO[0];
+                return new ResponseWrapper<>(new DDR_ReportDescriptionDTO[0], "ecoReportingDDRApi not defined");
             }
-            return ecoReportingDDRApi.listReports();
+            DDR_ReportDescriptionDTO[] listReports = ecoReportingDDRApi.listReports();
+            return new ResponseWrapper<>(listReports);
         } catch (Exception e) {
             NIS_ECOReportApplication.logger.error("ECOReportingDDRApiService.listReports", e);
+            return new ResponseWrapper<>(new DDR_ReportDescriptionDTO[0], e.getMessage());
         }
-
-        return new DDR_ReportDescriptionDTO[0];
     }
 
-    public DDR_ReportDataDTO getReportData(String reportUid) {
+    public ResponseWrapper<DDR_ReportDataDTO> getReportData(String reportUid) {
 
         try {
             var ecoReportingDDRApi = getECOReportingDDRApi();
             if (ecoReportingDDRApi == null) {
                 NIS_ECOReportApplication.logger.warn("ecoReportingDDRApi not defined");
-                return null;
+                return new ResponseWrapper<>(null, "ecoReportingDDRApi not defined");
             }
-            return ecoReportingDDRApi.getReportData(reportUid);
+            DDR_ReportDataDTO reportData = ecoReportingDDRApi.getReportData(reportUid);
+            return new ResponseWrapper<>(reportData);
         } catch (Exception e) {
             NIS_ECOReportApplication.logger.error("ECOReportingDDRApiService.getReportData", e);
+            return new ResponseWrapper<>(null, e.getMessage());
         }
-
-        return null;
     }
 
     private ECOReportingDDRApi _ecoReportingDDRApi;

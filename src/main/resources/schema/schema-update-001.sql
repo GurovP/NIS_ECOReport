@@ -28,7 +28,8 @@ BEGIN
       readFromApiCount INTEGER,
       addedCount INTEGER,
       updatedCount INTEGER,
-      deletedCount INTEGER
+      deletedCount INTEGER,
+      status text NULL
     );
 
     UPDATE schema_version

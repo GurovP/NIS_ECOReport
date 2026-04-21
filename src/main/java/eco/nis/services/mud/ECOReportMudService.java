@@ -1,9 +1,9 @@
-package eco.nis.services;
+package eco.nis.services.mud;
 
 import eco.nis.NIS_ECOReportApplication;
-import eco.nis.api.ECOReportingDDRApiService;
-import eco.nis.repositories.DDRDailyReportRepository;
+import eco.nis.api.mud.ECOReportingMudApiService;
 import eco.nis.repositories.ECOReportingSyncLogRepository;
+import eco.nis.repositories.MudDailyReportRepository;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -14,20 +14,20 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 @Service
-public class ECOReportDDRService {
+public class ECOReportMudService {
 
-    private final ECOReportDDRWorker worker;
+    private final ECOReportMudWorker worker;
     private final ScheduledExecutorService scheduledExecutorService;
 
-    public ECOReportDDRService(PlatformTransactionManager transactionManager,
-                               ECOReportingDDRApiService ddrApiService,
-                               DDRDailyReportRepository ddrDailyReportRepository,
+    public ECOReportMudService(PlatformTransactionManager transactionManager,
+                               ECOReportingMudApiService mudApiService,
+                               MudDailyReportRepository mudDailyReportRepository,
                                ECOReportingSyncLogRepository ecoReportingSyncLogRepository) {
 
-        this.worker = new ECOReportDDRWorker(
+        this.worker = new ECOReportMudWorker(
                 transactionManager,
-                ddrApiService,
-                ddrDailyReportRepository,
+                mudApiService,
+                mudDailyReportRepository,
                 ecoReportingSyncLogRepository,
                 NIS_ECOReportApplication.logger);
         this.scheduledExecutorService = Executors.newScheduledThreadPool(1);
@@ -36,12 +36,12 @@ public class ECOReportDDRService {
     @EventListener(ApplicationReadyEvent.class)
     public void appReady() {
 
-        startECOReportDDRPull();
+        startECOReportMUDPull();
     }
 
-    public void startECOReportDDRPull() {
+    public void startECOReportMUDPull() {
 
-        NIS_ECOReportApplication.logger.info("ProjectPersistenceGCService started.");
-        scheduledExecutorService.scheduleWithFixedDelay(worker::pullECOReportDDR, 1, 10, TimeUnit.MINUTES);
+        NIS_ECOReportApplication.logger.info("ECOReportMudService started.");
+        scheduledExecutorService.scheduleWithFixedDelay(worker::pullECOReport, 5, 10, TimeUnit.MINUTES);
     }
 }

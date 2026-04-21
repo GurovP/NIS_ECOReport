@@ -1,4 +1,4 @@
-package eco.nis.models;
+package eco.nis.models.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,10 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class StatusDTO {
+public class HealthDTO {
 
-    private String timestamp;
-    private String uid;
-    private int status;
-    private String error;
+    String status;
 }

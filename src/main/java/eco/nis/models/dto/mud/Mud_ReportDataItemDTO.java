@@ -1,4 +1,4 @@
-package eco.nis.models;
+package eco.nis.models.dto.mud;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,10 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class DDR_TimeDistributionDataItemDTO {
+public class Mud_ReportDataItemDTO {
 
-    private String timeDistributionUid;
-    private long timestamp;
-    private String name;
+    private int dataType;
     private String content;
 }

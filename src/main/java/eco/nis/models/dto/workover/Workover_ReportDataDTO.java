@@ -1,5 +1,6 @@
-package eco.nis.models;
+package eco.nis.models.dto.workover;
 
+import eco.nis.models.dto.ddr.DDR_TimeDistributionDataItemDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,9 +12,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class DDR_ReportDataDTO {
+public class Workover_ReportDataDTO {
 
     private String reportUid;
-    List<DDR_ReportDataItemDTO> reportDatum;
-    List<DDR_TimeDistributionDataItemDTO> timeDistributionDatum;
+    List<Workover_ReportDataItemDTO> reportDatum;
 }

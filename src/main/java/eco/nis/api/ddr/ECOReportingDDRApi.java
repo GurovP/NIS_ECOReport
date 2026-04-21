@@ -1,7 +1,11 @@
-package eco.nis.api;
+package eco.nis.api.ddr;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import eco.nis.models.*;
+import eco.nis.api.ECOReportingBaseApi;
+import eco.nis.models.dto.ddr.DDR_ReportDataDTO;
+import eco.nis.models.dto.ddr.DDR_ReportDescriptionDTO;
+import eco.nis.models.dto.ECOReportingServiceSettingsDTO;
+import eco.nis.models.dto.StatusDTO;
 import org.asynchttpclient.Request;
 import org.springframework.http.HttpHeaders;
 
@@ -25,8 +29,7 @@ public class ECOReportingDDRApi extends ECOReportingBaseApi {
         var responseString = new StringBuilder();
         var error = executeRequest(responseString, getListReportsRequest());
         if (error != null) {
-            StatusDTO status = objectMapper.readValue(responseString.toString(), StatusDTO.class);
-            throw new Exception(error);
+            throw new Exception(responseString.toString());
         }
 
         return objectMapper.readValue(responseString.toString(), DDR_ReportDescriptionDTO[].class);
@@ -37,8 +40,7 @@ public class ECOReportingDDRApi extends ECOReportingBaseApi {
         var responseString = new StringBuilder();
         var error = executeRequest(responseString, getGetReportRequest(reportUid));
         if (error != null) {
-            StatusDTO status = objectMapper.readValue(responseString.toString(), StatusDTO.class);
-            throw new Exception(error);
+            throw new Exception(responseString.toString());
         }
 
         return objectMapper.readValue(responseString.toString(), DDR_ReportDataDTO.class);

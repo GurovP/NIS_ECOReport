@@ -22,6 +22,13 @@ BEGIN
           approved BOOLEAN NOT NULL,
           lastApproveDate BIGINT NULL,
           lastApproveUser TEXT,
+          wellNameLegal TEXT,
+          wellField TEXT,
+          wellCluster TEXT,
+          wellCustomer TEXT,
+          rigName TEXT,
+          projectName TEXT,
+          projectPhase INTEGER NOT NULL,
           ddrdailytimedistributiondata_id BIGINT
       );
 

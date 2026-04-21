@@ -1,9 +1,9 @@
 package eco.nis.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eco.nis.models.ECOReportingServiceSettingsDTO;
-import eco.nis.models.HealthDTO;
-import eco.nis.models.VersionDTO;
+import eco.nis.models.dto.ECOReportingServiceSettingsDTO;
+import eco.nis.models.dto.HealthDTO;
+import eco.nis.models.dto.VersionDTO;
 import eco.nis.utilities.ObjectMapperUtility;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.Request;

@@ -1,4 +1,4 @@
-package eco.nis.models;
+package eco.nis.models.dto;
 
 import eco.nis.models.entities.ECOReportingServiceSettings;
 import lombok.Getter;

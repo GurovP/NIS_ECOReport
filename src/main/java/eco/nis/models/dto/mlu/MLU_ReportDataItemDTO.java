@@ -1,4 +1,4 @@
-package eco.nis.models;
+package eco.nis.models.dto.mlu;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class VersionDTO {
+public class MLU_ReportDataItemDTO {
 
-    String version;
+    private int dataType;
+    private String content;
 }
