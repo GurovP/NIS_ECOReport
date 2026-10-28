@@ -42,6 +42,6 @@ public class ECOReportMudService {
     public void startECOReportMUDPull() {
 
         NIS_ECOReportApplication.logger.info("ECOReportMudService started.");
-        scheduledExecutorService.scheduleWithFixedDelay(worker::pullECOReport, 5, 10, TimeUnit.MINUTES);
+        scheduledExecutorService.scheduleWithFixedDelay(worker::pullECOReport, 15, 30, TimeUnit.MINUTES);
     }
 }

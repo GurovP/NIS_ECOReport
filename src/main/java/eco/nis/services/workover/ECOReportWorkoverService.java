@@ -42,6 +42,6 @@ public class ECOReportWorkoverService {
     public void startECOReportWorkoverPull() {
 
         NIS_ECOReportApplication.logger.info("ECOReportWorkoverService started.");
-        scheduledExecutorService.scheduleWithFixedDelay(worker::pullECOReport, 7, 10, TimeUnit.MINUTES);
+        scheduledExecutorService.scheduleWithFixedDelay(worker::pullECOReport, 21, 30, TimeUnit.MINUTES);
     }
 }

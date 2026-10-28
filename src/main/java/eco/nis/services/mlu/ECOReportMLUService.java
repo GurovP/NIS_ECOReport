@@ -42,6 +42,6 @@ public class ECOReportMLUService {
     public void startECOReportMLUPull() {
 
         NIS_ECOReportApplication.logger.info("ECOReportMLUService started.");
-        scheduledExecutorService.scheduleWithFixedDelay(worker::pullECOReport, 3, 10, TimeUnit.MINUTES);
+        scheduledExecutorService.scheduleWithFixedDelay(worker::pullECOReport, 9, 30, TimeUnit.MINUTES);
     }
 }

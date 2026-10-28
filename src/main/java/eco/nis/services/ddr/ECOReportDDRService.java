@@ -42,6 +42,6 @@ public class ECOReportDDRService {
     public void startECOReportDDRPull() {
 
         NIS_ECOReportApplication.logger.info("ECOReportDDRService started.");
-        scheduledExecutorService.scheduleWithFixedDelay(worker::pullECOReport, 1, 10, TimeUnit.MINUTES);
+        scheduledExecutorService.scheduleWithFixedDelay(worker::pullECOReport, 1, 30, TimeUnit.MINUTES);
     }
 }

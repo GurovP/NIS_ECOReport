@@ -42,6 +42,6 @@ public class ECODvsDTableService {
     public void startECODvsDTablePull() {
 
         NIS_ECOReportApplication.logger.info("ECODvsDTableService started.");
-        scheduledExecutorService.scheduleWithFixedDelay(worker::pullECOReport, 9, 10, TimeUnit.MINUTES);
+        scheduledExecutorService.scheduleWithFixedDelay(worker::pullECOReport, 27, 30, TimeUnit.MINUTES);
     }
 }
