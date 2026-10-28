@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Objects;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -13,4 +15,9 @@ public class Workover_ReportDataItemDTO {
 
     private int dataType;
     private String content;
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(dataType, content);
+    }
 }

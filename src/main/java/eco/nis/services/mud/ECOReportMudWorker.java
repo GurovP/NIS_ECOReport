@@ -10,6 +10,8 @@ import eco.nis.models.entities.mud.MudDailyReportData;
 import eco.nis.repositories.MudDailyReportRepository;
 import eco.nis.repositories.ECOReportingSyncLogRepository;
 import eco.nis.services.ECOReportBaseWorker;
+import eco.nis.utilities.NumberUtility;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -66,11 +68,6 @@ public class ECOReportMudWorker extends ECOReportBaseWorker<MudDailyReport, Mud_
     }
 
     @Override
-    protected boolean needUpdateReport(MudDailyReport report, Mud_ReportDescriptionDTO mudReportDescription) {
-        return report.isApproved() != mudReportDescription.isApproved();
-    }
-
-    @Override
     protected String addReport(Mud_ReportDescriptionDTO mudReportDescription) {
 
         MudDailyReport report = new MudDailyReport();
@@ -89,9 +86,35 @@ public class ECOReportMudWorker extends ECOReportBaseWorker<MudDailyReport, Mud_
     @Override
     protected String updateReport(MudDailyReport report, Mud_ReportDescriptionDTO mudReportDescription) {
 
-        updateReportFields(report, mudReportDescription);
+        String error = null;
 
-        String error = updateReportData(report);
+        if (report.getReportDataHashCode() < 0 ||
+                System.currentTimeMillis() - report.getReportDate() < 3 * NumberUtility.oneDayMillis) {
+            ResponseWrapper<Mud_ReportDataDTO> reportDataWrapper = mudApiService.getReportData(report.getReportUid());
+
+            if (reportDataWrapper.getError() != null) {
+                return reportDataWrapper.getError();
+            }
+
+            var reportData = reportDataWrapper.getResult();
+
+            long hashCode = reportData.hashCode();
+
+            if (report.getReportDataHashCode() != hashCode) {
+                updateReportFields(report, mudReportDescription);
+
+                error = updateReportData(report, reportData);
+                if (error == null) {
+                    report.setReportDataHashCode(hashCode);
+                }
+            }
+        }
+        else if (report.isApproved() != mudReportDescription.isApproved()) {
+
+            updateReportFields(report, mudReportDescription);
+
+            error = updateReportData(report);
+        }
 
         if (error == null) {
             mudDailyReportRepository.save(report);
@@ -135,6 +158,16 @@ public class ECOReportMudWorker extends ECOReportBaseWorker<MudDailyReport, Mud_
 
         var reportData = reportDataWrapper.getResult();
 
+        String error = updateReportData(report, reportData);
+
+        if (error == null) {
+            report.setReportDataHashCode(reportData.hashCode());
+        }
+
+        return error;
+    }
+
+    private static @Nullable String updateReportData(MudDailyReport report, Mud_ReportDataDTO reportData) {
         if (report.getReportDatum() == null) {
             report.setReportDatum(new ArrayList<>());
         }

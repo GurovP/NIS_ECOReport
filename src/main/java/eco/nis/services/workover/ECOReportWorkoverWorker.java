@@ -10,6 +10,8 @@ import eco.nis.models.entities.workover.WorkoverDailyReportData;
 import eco.nis.repositories.WorkoverDailyReportRepository;
 import eco.nis.repositories.ECOReportingSyncLogRepository;
 import eco.nis.services.ECOReportBaseWorker;
+import eco.nis.utilities.NumberUtility;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -66,12 +68,6 @@ public class ECOReportWorkoverWorker extends ECOReportBaseWorker<WorkoverDailyRe
     }
 
     @Override
-    protected boolean needUpdateReport(WorkoverDailyReport report, Workover_ReportDescriptionDTO workoverReportDescription) {
-        return report.isApprovedDSV() != workoverReportDescription.isApprovedDSV() ||
-                report.isApprovedRTOC() != workoverReportDescription.isApprovedRTOC();
-    }
-
-    @Override
     protected String addReport(Workover_ReportDescriptionDTO workoverReportDescription) {
 
         WorkoverDailyReport report = new WorkoverDailyReport();
@@ -90,9 +86,36 @@ public class ECOReportWorkoverWorker extends ECOReportBaseWorker<WorkoverDailyRe
     @Override
     protected String updateReport(WorkoverDailyReport report, Workover_ReportDescriptionDTO workoverReportDescription) {
 
-        updateReportFields(report, workoverReportDescription);
+        String error = null;
 
-        String error = updateReportData(report);
+        if (report.getReportDataHashCode() < 0 ||
+                System.currentTimeMillis() - report.getReportDate() < 3 * NumberUtility.oneDayMillis) {
+            ResponseWrapper<Workover_ReportDataDTO> reportDataWrapper = workoverApiService.getReportData(report.getReportUid());
+
+            if (reportDataWrapper.getError() != null) {
+                return reportDataWrapper.getError();
+            }
+
+            var reportData = reportDataWrapper.getResult();
+
+            long hashCode = reportData.hashCode();
+
+            if (report.getReportDataHashCode() != hashCode) {
+                updateReportFields(report, workoverReportDescription);
+
+                error = updateReportData(report, reportData);
+                if (error == null) {
+                    report.setReportDataHashCode(hashCode);
+                }
+            }
+        }
+        else if (report.isApprovedDSV() != workoverReportDescription.isApprovedDSV() ||
+                report.isApprovedRTOC() != workoverReportDescription.isApprovedRTOC()) {
+
+            updateReportFields(report, workoverReportDescription);
+
+            error = updateReportData(report);
+        }
 
         if (error == null) {
             workoverDailyReportRepository.save(report);
@@ -150,6 +173,16 @@ public class ECOReportWorkoverWorker extends ECOReportBaseWorker<WorkoverDailyRe
 
         var reportData = reportDataWrapper.getResult();
 
+        String error = updateReportData(report, reportData);
+
+        if (error == null) {
+            report.setReportDataHashCode(reportData.hashCode());
+        }
+
+        return error;
+    }
+
+    private static @Nullable String updateReportData(WorkoverDailyReport report, Workover_ReportDataDTO reportData) {
         if (report.getReportDatum() == null) {
             report.setReportDatum(new ArrayList<>());
         }

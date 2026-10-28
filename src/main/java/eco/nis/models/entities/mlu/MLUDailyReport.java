@@ -41,6 +41,8 @@ public class MLUDailyReport {
     private String projectName;
     private int projectPhase;
 
+    private long reportDataHashCode;
+
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy="report")
     private List<MLUDailyReportData> reportDatum = new ArrayList<>();
 
@@ -69,6 +71,8 @@ public class MLUDailyReport {
         rigName = other.getRigName();
         projectName = other.getProjectName();
         projectPhase = other.getProjectPhase();
+
+        reportDataHashCode = other.getReportDataHashCode();
 
         copyReportData(other);
     }
@@ -239,6 +243,14 @@ public class MLUDailyReport {
 
     public void setReportDatum(List<MLUDailyReportData> reportDatum) {
         this.reportDatum = reportDatum;
+    }
+
+    public long getReportDataHashCode() {
+        return reportDataHashCode;
+    }
+
+    public void setReportDataHashCode(long reportDataHashCode) {
+        this.reportDataHashCode = reportDataHashCode;
     }
 }
 

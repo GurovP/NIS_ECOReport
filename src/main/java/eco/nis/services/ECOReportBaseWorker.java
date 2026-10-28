@@ -42,8 +42,6 @@ public abstract class ECOReportBaseWorker<TReport, TReportDescriptionDTO> {
 
     protected abstract String getReportUid(TReport report);
 
-    protected abstract boolean needUpdateReport(TReport report, TReportDescriptionDTO reportDescriptionDTO);
-
     protected abstract String addReport(TReportDescriptionDTO reportDescriptionDTO);
 
     protected abstract String updateReport(TReport report, TReportDescriptionDTO reportDescriptionDTO);
@@ -97,14 +95,11 @@ public abstract class ECOReportBaseWorker<TReport, TReportDescriptionDTO> {
                                 stringBuilder.append(reportDTOUid).append(" : ").append(error).append(". ");
                             }
                         } else {
-                            if (needUpdateReport(report, reportDescriptionDTO)) {
-                                String error = updateReport(report, reportDescriptionDTO);
-                                if (error == null) {
-                                    ecoReportingSyncLog.setUpdatedCount(ecoReportingSyncLog.getUpdatedCount() + 1);
-                                }
-                                else {
-                                    stringBuilder.append(reportDTOUid).append(" : ").append(error).append(". ");
-                                }
+                            String error = updateReport(report, reportDescriptionDTO);
+                            if (error == null) {
+                                ecoReportingSyncLog.setUpdatedCount(ecoReportingSyncLog.getUpdatedCount() + 1);
+                            } else {
+                                stringBuilder.append(reportDTOUid).append(" : ").append(error).append(". ");
                             }
                             allReportUids.remove(getReportUid(report));
                         }

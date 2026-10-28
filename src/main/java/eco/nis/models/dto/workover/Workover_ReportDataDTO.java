@@ -1,12 +1,14 @@
 package eco.nis.models.dto.workover;
 
-import eco.nis.models.dto.ddr.DDR_TimeDistributionDataItemDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -16,4 +18,12 @@ public class Workover_ReportDataDTO {
 
     private String reportUid;
     List<Workover_ReportDataItemDTO> reportDatum;
+
+    @Override
+    public int hashCode() {
+        List<Object> objects = new ArrayList<>();
+        objects.add(reportUid);
+        objects.addAll(reportDatum.stream().sorted(Comparator.comparingInt(Workover_ReportDataItemDTO::getDataType)).toList());
+        return Objects.hash(objects);
+    }
 }

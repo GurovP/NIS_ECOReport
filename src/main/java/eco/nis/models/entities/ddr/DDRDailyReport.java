@@ -35,6 +35,8 @@ public class DDRDailyReport {
     private String projectName;
     private int projectPhase;
 
+    private long reportDataHashCode;
+
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy="report")
     private List<DDRDailyReportData> reportDatum = new ArrayList<>();
 
@@ -66,6 +68,8 @@ public class DDRDailyReport {
         rigName = other.getRigName();
         projectName = other.getProjectName();
         projectPhase = other.getProjectPhase();
+
+        reportDataHashCode = other.getReportDataHashCode();
 
         copyReportData(other);
     }
@@ -242,6 +246,14 @@ public class DDRDailyReport {
 
     public void setDdrDailyTimeDistributionData(DDRDailyTimeDistributionData ddrDailyTimeDistributionData) {
         this.ddrDailyTimeDistributionData = ddrDailyTimeDistributionData;
+    }
+
+    public long getReportDataHashCode() {
+        return reportDataHashCode;
+    }
+
+    public void setReportDataHashCode(long reportDataHashCode) {
+        this.reportDataHashCode = reportDataHashCode;
     }
 }
 

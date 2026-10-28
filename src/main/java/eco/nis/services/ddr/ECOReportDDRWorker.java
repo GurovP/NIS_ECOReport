@@ -13,6 +13,8 @@ import eco.nis.models.entities.ddr.DDRDailyTimeDistributionRecord;
 import eco.nis.repositories.DDRDailyReportRepository;
 import eco.nis.repositories.ECOReportingSyncLogRepository;
 import eco.nis.services.ECOReportBaseWorker;
+import eco.nis.utilities.NumberUtility;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -69,11 +71,6 @@ public class ECOReportDDRWorker extends ECOReportBaseWorker<DDRDailyReport, DDR_
     }
 
     @Override
-    protected boolean needUpdateReport(DDRDailyReport report, DDR_ReportDescriptionDTO ddrReportDescription) {
-        return report.isApproved() != ddrReportDescription.isApproved();
-    }
-
-    @Override
     protected String addReport(DDR_ReportDescriptionDTO ddrReportDescription) {
 
         DDRDailyReport report = new DDRDailyReport();
@@ -92,9 +89,35 @@ public class ECOReportDDRWorker extends ECOReportBaseWorker<DDRDailyReport, DDR_
     @Override
     protected String updateReport(DDRDailyReport report, DDR_ReportDescriptionDTO ddrReportDescription) {
 
-        updateReportFields(report, ddrReportDescription);
+        String error = null;
 
-        String error = updateReportData(report);
+        if (report.getReportDataHashCode() < 0 ||
+                System.currentTimeMillis() - report.getReportDate() < 3 * NumberUtility.oneDayMillis) {
+            ResponseWrapper<DDR_ReportDataDTO> reportDataWrapper = ddrApiService.getReportData(report.getReportUid());
+
+            if (reportDataWrapper.getError() != null) {
+                return reportDataWrapper.getError();
+            }
+
+            var reportData = reportDataWrapper.getResult();
+
+            long hashCode = reportData.hashCode();
+
+            if (report.getReportDataHashCode() != hashCode) {
+                updateReportFields(report, ddrReportDescription);
+
+                error = updateReportData(report, reportData);
+                if (error == null) {
+                    report.setReportDataHashCode(hashCode);
+                }
+            }
+        }
+        else if (report.isApproved() != ddrReportDescription.isApproved()) {
+
+            updateReportFields(report, ddrReportDescription);
+
+            error = updateReportData(report);
+        }
 
         if (error == null) {
             ddrDailyReportRepository.save(report);
@@ -138,6 +161,16 @@ public class ECOReportDDRWorker extends ECOReportBaseWorker<DDRDailyReport, DDR_
 
         var reportData = reportDataWrapper.getResult();
 
+        String error = updateReportData(report, reportData);
+
+        if (error == null) {
+            report.setReportDataHashCode(reportData.hashCode());
+        }
+
+        return error;
+    }
+
+    private static @Nullable String updateReportData(DDRDailyReport report, DDR_ReportDataDTO reportData) {
         if (report.getReportDatum() == null) {
             report.setReportDatum(new ArrayList<>());
         }

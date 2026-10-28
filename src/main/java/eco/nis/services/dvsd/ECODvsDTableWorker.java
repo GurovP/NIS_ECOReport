@@ -67,8 +67,7 @@ public class ECODvsDTableWorker extends ECOReportBaseWorker<DvsDTable, DvsD_DvsD
         return report.getTableUid();
     }
 
-    @Override
-    protected boolean needUpdateReport(DvsDTable report, DvsD_DvsDTableDescriptionDTO ddrReportDescription) {
+    private boolean needUpdateReport(DvsDTable report, DvsD_DvsDTableDescriptionDTO ddrReportDescription) {
         return !Objects.equals(report.getLastUpdated(), ddrReportDescription.getLastUpdated());
     }
 
@@ -90,6 +89,9 @@ public class ECODvsDTableWorker extends ECOReportBaseWorker<DvsDTable, DvsD_DvsD
 
     @Override
     protected String updateReport(DvsDTable report, DvsD_DvsDTableDescriptionDTO ddrReportDescription) {
+
+        if (!needUpdateReport(report, ddrReportDescription))
+            return null;
 
         updateTableFields(report, ddrReportDescription);
 

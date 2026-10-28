@@ -10,6 +10,8 @@ import eco.nis.models.entities.mlu.MLUDailyReportData;
 import eco.nis.repositories.MLUDailyReportRepository;
 import eco.nis.repositories.ECOReportingSyncLogRepository;
 import eco.nis.services.ECOReportBaseWorker;
+import eco.nis.utilities.NumberUtility;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -66,11 +68,6 @@ public class ECOReportMLUWorker extends ECOReportBaseWorker<MLUDailyReport, MLU_
     }
 
     @Override
-    protected boolean needUpdateReport(MLUDailyReport report, MLU_ReportDescriptionDTO mluReportDescription) {
-        return report.isApproved() != mluReportDescription.isApproved();
-    }
-
-    @Override
     protected String addReport(MLU_ReportDescriptionDTO mluReportDescription) {
 
         MLUDailyReport report = new MLUDailyReport();
@@ -89,9 +86,35 @@ public class ECOReportMLUWorker extends ECOReportBaseWorker<MLUDailyReport, MLU_
     @Override
     protected String updateReport(MLUDailyReport report, MLU_ReportDescriptionDTO mluReportDescription) {
 
-        updateReportFields(report, mluReportDescription);
+        String error = null;
 
-        String error = updateReportData(report);
+        if (report.getReportDataHashCode() < 0 ||
+                System.currentTimeMillis() - report.getReportDate() < 3 * NumberUtility.oneDayMillis) {
+            ResponseWrapper<MLU_ReportDataDTO> reportDataWrapper = mluApiService.getReportData(report.getReportUid());
+
+            if (reportDataWrapper.getError() != null) {
+                return reportDataWrapper.getError();
+            }
+
+            var reportData = reportDataWrapper.getResult();
+
+            long hashCode = reportData.hashCode();
+
+            if (report.getReportDataHashCode() != hashCode) {
+                updateReportFields(report, mluReportDescription);
+
+                error = updateReportData(report, reportData);
+                if (error == null) {
+                    report.setReportDataHashCode(hashCode);
+                }
+            }
+        }
+        else if (report.isApproved() != mluReportDescription.isApproved()) {
+
+            updateReportFields(report, mluReportDescription);
+
+            error = updateReportData(report);
+        }
 
         if (error == null) {
             mluDailyReportRepository.save(report);
@@ -136,6 +159,16 @@ public class ECOReportMLUWorker extends ECOReportBaseWorker<MLUDailyReport, MLU_
 
         var reportData = reportDataWrapper.getResult();
 
+        String error = updateReportData(report, reportData);
+
+        if (error == null) {
+            report.setReportDataHashCode(reportData.hashCode());
+        }
+
+        return error;
+    }
+
+    private static @Nullable String updateReportData(MLUDailyReport report, MLU_ReportDataDTO reportData) {
         if (report.getReportDatum() == null) {
             report.setReportDatum(new ArrayList<>());
         }

@@ -38,6 +38,8 @@ public class WorkoverDailyReport {
     private Long workoverStartDate;
     private Long workoverEndDate;
 
+    private long reportDataHashCode;
+
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy="report")
     private List<WorkoverDailyReportData> reportDatum = new ArrayList<>();
 
@@ -73,6 +75,8 @@ public class WorkoverDailyReport {
         projectPhase = other.getProjectPhase();
         workoverStartDate = other.getWorkoverStartDate();
         workoverEndDate = other.getWorkoverEndDate();
+
+        reportDataHashCode = other.getReportDataHashCode();
 
         copyReportData(other);
     }
@@ -291,6 +295,14 @@ public class WorkoverDailyReport {
 
     public void setReportDatum(List<WorkoverDailyReportData> reportDatum) {
         this.reportDatum = reportDatum;
+    }
+
+    public long getReportDataHashCode() {
+        return reportDataHashCode;
+    }
+
+    public void setReportDataHashCode(long reportDataHashCode) {
+        this.reportDataHashCode = reportDataHashCode;
     }
 }
 
