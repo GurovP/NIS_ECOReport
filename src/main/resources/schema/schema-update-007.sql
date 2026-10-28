@@ -16,8 +16,6 @@ BEGIN
     alter table if exists muddailyreport add column if not exists reportDataHashCode BIGINT NOT NULL default 0;
     alter table if exists workoverdailyreport add column if not exists reportDataHashCode BIGINT NOT NULL default 0;
 
-    private long reportDataHashCode;
-
     UPDATE schema_version
     SET version = newVersion;
 
